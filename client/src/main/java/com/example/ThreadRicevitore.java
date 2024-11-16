@@ -7,43 +7,57 @@ import java.io.InputStreamReader;
 import java.net.Socket;
 
 public class ThreadRicevitore extends Thread {
-    Socket socket;
-    Socket socket2;
-    boolean ascoltato;
+    Socket s0;
+    String altroUtente;
+    BufferedReader in;
+    DataOutputStream out;
+    Boolean flag;
 
-    ThreadRicevitore(Socket socket, Socket socket2) {
-        this.socket = socket;
-        this.socket2 = socket2;
+    public ThreadRicevitore(Socket s0, String altroUtente) {
+        this.s0 = s0;
+        this.altroUtente = altroUtente;
     }
 
-    public void setAscoltato(boolean ascoltato) {
-        this.ascoltato = ascoltato;
+    public void setFlag(Boolean flag) {
+        this.flag = flag;
     }
 
-    public boolean isAscoltato() {
-        return ascoltato;
-    }
 
+
+    @Override
     public void run() {
-        String line = "";
-        try {
-            BufferedReader in = new BufferedReader(new InputStreamReader(socket2.getInputStream()));
-            DataOutputStream out = new DataOutputStream(socket.getOutputStream());
+        try 
+        {
 
-            while(ascoltato){
+            in = new BufferedReader(new InputStreamReader(s0.getInputStream()));
+            out = new DataOutputStream(s0.getOutputStream());
+            flag = true;
 
-                if((line = in.readLine()) == null){
-                    ascoltato = false;
+
+            while (flag && !Thread.interrupted()) {
+                if (in.ready()) { // Verifica se ci sono dati disponibili per la lettura
+                    String msg = in.readLine();
+                    if (msg.equals("NONE")) {
+                        System.out.println("Destinatario non trovato, uscire dalla chat digitando '!'");
+                    }else{
+                        if (msg.split(":")[0].equals(altroUtente)) {
+                            System.out.println(msg);
+                        }
+                    }
+                } else {
+                    Thread.sleep(100);
                 }
-                this.setAscoltato(ascoltato);
-                out.writeBytes("MESSAGGIO:" + line);
-                System.out.println("MESSAGGIO:" + line);
             }
-
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            
+            
+         } catch (IOException e) {
+            if (!flag) {
+                System.out.println("Thread terminato in modo sicuro.");
+            } else {
+            e.printStackTrace(); // Stampa il problema se si verifica in circostanze inattese
+            }
+        } catch (InterruptedException e) {
+            System.out.println("Thread interrotto.");
         }
-
     }
 }

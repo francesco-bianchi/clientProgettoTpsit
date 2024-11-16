@@ -11,32 +11,23 @@ import java.util.Scanner;
 public class Main {
     public static void main(String[] args) throws UnknownHostException, IOException {
         Socket socket = new Socket("localhost", 3000);
-        Socket socketAscolto = new Socket("localhost", 4000);
         String username;
         String serverUsername;
         String[] scelta;
-        String[] scelta2;
         String stringaScelta;
-        String stringaScelta2;
-        String serverRisposta;
         String listaStringa;
         String[] lista;
         String stringM = "";
         String tipoM = "";
         String testoM = "";
         String nomeM = "";
-        boolean ascolta= false;
         Scanner scanner = new Scanner(System.in);
         try {
 
             BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             DataOutputStream out = new DataOutputStream(socket.getOutputStream());
-            DataOutputStream out2 = new DataOutputStream(socketAscolto.getOutputStream());
             
-            // Receiver
-            ThreadRicevitore ricevitore = new ThreadRicevitore(socket, socketAscolto);
-
-            ricevitore.start();
+            
 
 
             do {
@@ -60,24 +51,14 @@ public class Main {
                 System.out.println("listaG - lista gruppi");
                 System.out.println("CREA:NOME - crea un gruppo");
                 System.out.println("PART:NOME - entra in un gruppo");
-                System.out.println("nuova - avvia una chat");
+                System.out.println("PRIV - scrivi in una chat privata");
+                System.out.println("GRP - scrivi in un gruppo");
+                System.out.println("ALL - scrivi a tutti");
                 System.out.println("EXIT - esci");
                 
                 stringaScelta = scanner.nextLine();
                 scelta = stringaScelta.split(":");
                 
-                do {
-                    ascolta = ricevitore.isAscoltato();
-                    if(!ascolta)
-                        ascolta = false;
-                        else{
-                            String messaggio = in.readLine();
-                            System.out.println(messaggio);
-
-                        }
-                } while (ascolta);
-                    
-
 
                 switch (scelta[0]) {
                     case "listaC":
@@ -110,60 +91,27 @@ public class Main {
                        out.writeBytes(stringaScelta + "\n");
                           
                     break;
-                    case "nuova":
-                        out.writeBytes("M" + "\n");
-                          
+                    case "PRIV":
+                    tipoM = "PRIV";
+                    System.out.println("a chi lo vuoi inviare?");
+                    nomeM = scanner.nextLine();
+                    
+                    ThreadRicevitore ricevitore = new ThreadRicevitore(socket, nomeM);
+                    ricevitore.start();
+
+                    System.out.println("Inserisci il messaggio da inviare");
+                    do{
+                        testoM = scanner.nextLine();
+                        if(!testoM.equals("!"))
+                        {
+                            out.writeBytes(tipoM +":"+ nomeM +":"+ testoM +"\n");
+                        }
+                    }while (!testoM.equals("!"));
+
                     break;
                 
                     default:
                         break;
-                }
-
-                // ricezione
-                serverRisposta = in.readLine();
-
-                if (serverRisposta.equals("OKG")) {
-                    System.out.println("il gruppo è stato creato");
-                }
-                if (serverRisposta.equals("KOG")) {
-                    System.out.println("il gruppo è già esistente");
-                }
-
-                if (serverRisposta.equals("OKP")) {
-                    System.out.println("ora partecipi al gruppo");
-                }
-                if (serverRisposta.equals("KOP")) {
-                    System.out.println("non puoi partecipare a questo gruppo");
-                }
-
-                if (serverRisposta.equals("OKK")) {
-                    System.out.println("cosa vuoi fare?");
-                    System.out.println("PRIV - invia un messaggio ad un solo utente");
-                    System.out.println("GRP - invia un messaggio ad un gruppo");
-                    System.out.println("ALL - invia un messaggio a tutti gli utenti");
-                    tipoM = scanner.nextLine();
-
-                    if (!tipoM.equals("ALL")) {
-                        System.out.println("a chi lo vuoi inviare?");
-                        nomeM = scanner.nextLine();
-                        ;
-                    }
-
-                    System.out.println("Inserisci il messaggio da inviare");
-                    testoM = scanner.nextLine();
-
-                    stringM = tipoM + ":" + nomeM + ":" + testoM;
-                    out.writeBytes(stringM + "\n");
-                    String mess = in.readLine();
-                    
-                    if(mess.equals("KKO")){
-                        System.out.println("nome del contatto inesistente");
-                    }
-                    else if(username.equals(nomeM))
-                        System.out.println(mess);
-                }
-                if (serverRisposta.equals("KKO")) {
-                    System.out.println("Non ci sono altri utenti online");
                 }
 
             } while (!scelta.equals("EXIT"));
