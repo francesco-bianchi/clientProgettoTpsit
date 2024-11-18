@@ -92,22 +92,23 @@ public class Main {
                           
                     break;
                     case "PRIV":
+
                     tipoM = "PRIV";
                     System.out.println("a chi lo vuoi inviare?");
                     nomeM = scanner.nextLine();
-                    
                     ThreadRicevitore ricevitore = new ThreadRicevitore(socket, nomeM);
                     ricevitore.start();
-
+                    
                     System.out.println("Inserisci il messaggio da inviare");
                     do{
                         testoM = scanner.nextLine();
-                        if(!testoM.equals("!"))
+                        if(!testoM.equals("/EXIT"))
                         {
                             out.writeBytes(tipoM +":"+ nomeM +":"+ testoM +"\n");
                         }
-                    }while (!testoM.equals("!"));
-
+                    }while (!testoM.equals("/EXIT"));
+                    ricevitore.setFlag(false);
+                    ricevitore.interrupt();
                     break;
                 
                     default:

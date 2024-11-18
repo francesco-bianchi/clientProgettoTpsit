@@ -34,30 +34,24 @@ public class ThreadRicevitore extends Thread {
             flag = true;
 
 
-            while (flag && !Thread.interrupted()) {
-                if (in.ready()) { // Verifica se ci sono dati disponibili per la lettura
-                    String msg = in.readLine();
-                    if (msg.equals("NONE")) {
-                        System.out.println("Destinatario non trovato, uscire dalla chat digitando '!'");
+            while (flag) {
+                String msg;
+                if ((msg= in.readLine())!=null) { // Verifica se ci sono dati disponibili per la lettura
+                    
+                    if (msg.equals("KO")) {
+                        System.out.println("Destinatario non trovato, uscire dalla chat digitando '/EXIT'");
                     }else{
                         if (msg.split(":")[0].equals(altroUtente)) {
                             System.out.println(msg);
                         }
                     }
-                } else {
-                    Thread.sleep(100);
-                }
+                } 
             }
             
             
          } catch (IOException e) {
-            if (!flag) {
-                System.out.println("Thread terminato in modo sicuro.");
-            } else {
+            
             e.printStackTrace(); // Stampa il problema se si verifica in circostanze inattese
-            }
-        } catch (InterruptedException e) {
-            System.out.println("Thread interrotto.");
         }
     }
 }
