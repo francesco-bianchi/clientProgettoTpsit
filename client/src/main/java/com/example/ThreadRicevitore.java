@@ -36,13 +36,16 @@ public class ThreadRicevitore extends Thread {
 
             while (flag) {
                 String msg;
-                if ((msg= in.readLine())!=null) { // Verifica se ci sono dati disponibili per la lettura
-                    
+                if (in.ready()) { // Verifica se ci sono dati disponibili per la lettura
+                    msg = in.readLine();
                     if (msg.equals("KO")) {
                         System.out.println("Destinatario non trovato, uscire dalla chat digitando '/EXIT'");
                     }else{
                         if (msg.split(":")[0].equals(altroUtente)) {
                             System.out.println(msg);
+                        }
+                        else{
+                            System.out.println("notifica");
                         }
                     }
                 } 
