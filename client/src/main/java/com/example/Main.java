@@ -10,7 +10,7 @@ import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) throws UnknownHostException, IOException {
-        Socket socket = new Socket("localhost", 3000);
+        Socket socket = new Socket("172.21.104.211", 3000);
         String username;
         String serverUsername;
         String[] scelta;
@@ -47,14 +47,19 @@ public class Main {
             } while (serverUsername.equals("KOS"));
 
             do {
+                System.out.println("");
+                System.out.println("--- Menù ---");
                 System.out.println("listaC - lista contatti");
-                System.out.println("listaG - lista gruppi");
-                System.out.println("CREA:NOME - crea un gruppo");
-                System.out.println("PART:NOME - entra in un gruppo");
+                //System.out.println("listaG - lista gruppi");
+                //System.out.println("CREA - crea un gruppo");
+                //System.out.println("PART - entra in un gruppo");
                 System.out.println("PRIV - scrivi in una chat privata");
-                System.out.println("GRP - scrivi in un gruppo");
+                //System.out.println("GRP - scrivi in un gruppo");
                 System.out.println("ALL - scrivi a tutti");
                 System.out.println("EXIT - esci");
+                System.out.println("");
+                System.out.println("");
+                
                 
                 stringaScelta = scanner.nextLine();
                 scelta = stringaScelta.split(":");
@@ -92,29 +97,45 @@ public class Main {
                           
                     break;
                     case "PRIV":
-
-                    tipoM = "PRIV";
-                    System.out.println("a chi lo vuoi inviare?");
-                    nomeM = scanner.nextLine();
-                    ThreadRicevitore ricevitore = new ThreadRicevitore(socket, nomeM);
-                    ricevitore.start();
-                    
-                    System.out.println("Inserisci il messaggio da inviare");
-                    do{
-                        testoM = scanner.nextLine();
-                        if(!testoM.equals("/EXIT"))
-                        {
-                            out.writeBytes(tipoM +":"+ nomeM +":"+ testoM +"\n");
+                        tipoM = "PRIV";
+                        System.out.println("a chi lo vuoi inviare?");
+                        nomeM = scanner.nextLine();
+                        out.writeBytes(tipoM +":"+ nomeM + "\n");
+                        String crono = in.readLine();
+                        if(crono.equals("NO")){
+                            System.out.println("Nessun messaggio precedente");
                         }
-                    }while (!testoM.equals("/EXIT"));
-                    ricevitore.setFlag(false);
-                    ricevitore.interrupt();
+                        else
+                            System.out.println(crono);
+                        ThreadRicevitore ricevitore = new ThreadRicevitore(socket, nomeM);
+                        ricevitore.start();
+                            System.out.println("Inserisci il messaggio da inviare");
+                            do{
+                                testoM = scanner.nextLine();
+                                if(!testoM.equals("/EXIT"))
+                                {
+                                    out.writeBytes(tipoM +":"+ nomeM +":"+testoM +"\n");
+                                }
+                            }while (!testoM.equals("/EXIT"));
+                            ricevitore.setFlag(false);
+                            ricevitore.interrupt();
+                        
+                    break;
+                    case "ALL":
+                        tipoM = "ALL";
+                        ThreadRicevitore ricevitore2 = new ThreadRicevitore(socket);
+                        ricevitore2.start();
+                            System.out.println("Inserisci il messaggio da inviare");
+                            testoM = scanner.nextLine();
+                            out.writeBytes(tipoM  +":"+testoM +"\n");
+                            ricevitore2.setFlag(false);
+                            ricevitore2.interrupt();
+                        
                     break;
                 
                     default:
                         break;
                 }
-
             } while (!scelta.equals("EXIT"));
 
         } catch (Exception e) {

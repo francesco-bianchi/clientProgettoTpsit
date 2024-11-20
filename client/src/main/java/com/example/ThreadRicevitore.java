@@ -17,6 +17,9 @@ public class ThreadRicevitore extends Thread {
         this.s0 = s0;
         this.altroUtente = altroUtente;
     }
+    public ThreadRicevitore(Socket s0) {
+        this.s0 = s0;
+    }
 
     public void setFlag(Boolean flag) {
         this.flag = flag;
@@ -38,17 +41,24 @@ public class ThreadRicevitore extends Thread {
                 String msg;
                 if (in.ready()) { // Verifica se ci sono dati disponibili per la lettura
                     msg = in.readLine();
+                    String[] msgSplit = msg.split(":");
                     if (msg.equals("KO")) {
                         System.out.println("Destinatario non trovato, uscire dalla chat digitando '/EXIT'");
-                    }else{
-                        if (msg.split(":")[0].equals(altroUtente)) {
+                    }else if (msgSplit[0].equals(altroUtente)) {
                             System.out.println(msg);
                         }
-                        else{
-                            System.out.println("notifica");
-                        }
+                    else if(!msgSplit[0].equals("NO")){
+                        if(!msgSplit[0].equals("l") && !msgSplit.equals("ALL"))
+                            System.out.println("notifica da " + msgSplit[0]);
                     }
-                } 
+                    else if(msgSplit[0].equals("NO")){
+                        System.out.println("Nessun messaggio");
+                    }
+                    else if(msgSplit[0].equals("ALL")){
+                        System.out.println("notifica di un messaggio inviato a tutti " + msgSplit[0]);
+                    }
+                }
+                    
             }
             
             
