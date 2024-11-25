@@ -5,26 +5,36 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.Socket;
+import java.util.ArrayList;
 
 public class ThreadRicevitore extends Thread {
-    Socket s0;
-    String altroUtente;
-    BufferedReader in;
-    DataOutputStream out;
-    Boolean flag;
+    Socket socket;
+    String dest;
+    String mitt;
+    boolean threadAttivo;
+    boolean entrato;
 
-    public ThreadRicevitore(Socket s0, String altroUtente) {
-        this.s0 = s0;
-        this.altroUtente = altroUtente;
-    }
-    public ThreadRicevitore(Socket s0) {
-        this.s0 = s0;
+    public ThreadRicevitore(Socket socket,String mitt, String dest) {
+        this.socket = socket;
+        this.mitt = mitt;
+        this.dest = dest;
     }
 
-    public void setFlag(Boolean flag) {
-        this.flag = flag;
+
+    public void threadAttivo(boolean threadAttivo) {
+        this.threadAttivo = threadAttivo;
     }
 
+
+
+    public boolean isEntrato() {
+        return entrato;
+    }
+
+
+    public void setEntrato(boolean entrato) {
+        this.entrato = entrato;
+    }
 
 
     @Override
@@ -32,31 +42,37 @@ public class ThreadRicevitore extends Thread {
         try 
         {
 
-            in = new BufferedReader(new InputStreamReader(s0.getInputStream()));
-            out = new DataOutputStream(s0.getOutputStream());
-            flag = true;
+            BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            DataOutputStream out = new DataOutputStream(socket.getOutputStream());
+            threadAttivo = true;
 
 
-            while (flag) {
-                String msg;
+            while (threadAttivo) {
+                String messServer;
                 if (in.ready()) { // Verifica se ci sono dati disponibili per la lettura
-                    msg = in.readLine();
-                    String[] msgSplit = msg.split(":");
-                    if (msg.equals("KO")) {
-                        System.out.println("Destinatario non trovato, uscire dalla chat digitando '/EXIT'");
-                    }else if (msgSplit[0].equals(altroUtente)) {
-                            System.out.println(msg);
-                        }
-                    else if(!msgSplit[0].equals("NO")){
-                        if(!msgSplit[0].equals("l") && !msgSplit.equals("ALL"))
-                            System.out.println("notifica da " + msgSplit[0]);
+                    messServer = in.readLine();
+                    String[] msgSplit = messServer.split(":");
+                    if (messServer.equals("KO")) {
+                        System.out.println("Destinatario non trovato, scrivi /EXIT per uscrire");
                     }
-                    else if(msgSplit[0].equals("NO")){
+                    else if (messServer.equals("NO")) {
                         System.out.println("Nessun messaggio");
                     }
-                    else if(msgSplit[0].equals("ALL")){
-                        System.out.println("notifica di un messaggio inviato a tutti " + msgSplit[0]);
+                    
+                    else if(msgSplit[0].equals("l") && msgSplit[2] == "true"){ //avviene quando si rientra in chat
+                        
+                        String[] cronologia = msgSplit[1].split(";");
+                        for (String s : cronologia) {
+                            if(msgSplit[3].equals(dest)){
+                                System.out.println(s);
+                            }
+                        }
+                        
                     }
+                    else if (msgSplit[0].equals(dest) || msgSplit[2] == "false") {
+                        System.out.println(msgSplit[0] + ": " + msgSplit[1]);
+                        
+                    } // mentre si è in chat
                 }
                     
             }
