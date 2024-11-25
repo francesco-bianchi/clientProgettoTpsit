@@ -56,7 +56,7 @@ public class ThreadRicevitore extends Thread {
                         System.out.println("Destinatario non trovato, scrivi /EXIT per uscrire");
                     }
                     else if (messServer.equals("NO")) {
-                        System.out.println("Nessun messaggio");
+                        System.out.println("   ---   ");
                     }
                     
                     else if(msgSplit[0].equals("l") && msgSplit[2] == "true"){ //avviene quando si rientra in chat
@@ -70,9 +70,11 @@ public class ThreadRicevitore extends Thread {
                         
                     }
                     else if (msgSplit[0].equals(dest) || msgSplit[2] == "false") {
-                        System.out.println(msgSplit[0] + ": " + msgSplit[1]);
-                        
+                        System.out.println(msgSplit[0] + ": " + msgSplit[1]); //fa vedere da chi arriva il messaggio e il contenuto
                     } // mentre si è in chat
+                    else if(msgSplit[0].equals("ALL")){
+                        System.out.println(msgSplit[2] + "(a tutti): " + msgSplit[1]); //fa
+                    }
                 }
                     
             }

@@ -46,7 +46,7 @@ public class Main {
                 System.out.println("");
                 System.out.println("--- Menù ---");
                 System.out.println("listaC - lista contatti");
-                System.out.println("PRIV - scrivi in una chat privata");
+                System.out.println("PRIV - scrivi in una chat privata (/exit per uscire)");
                 System.out.println("ALL - scrivi a tutti");
                 System.out.println("EXIT - esci");
                 System.out.println("---");
@@ -69,18 +69,22 @@ public class Main {
                         break;
                     case "PRIV":
                         tipoM = "PRIV";
-                        System.out.println("a chi lo vuoi inviare?");
-                        nomeM = scanner.nextLine();
+                        do {
+                            System.out.println("a chi lo vuoi inviare?");
+                            nomeM = scanner.nextLine();
+                        } while (!nomeM.equals(username));
+                        
                         out.writeBytes(tipoM + ":" + nomeM + ":CR\n");
                         ThreadRicevitore ricevitore = new ThreadRicevitore(socket,username, nomeM);
                         ricevitore.start();
+                        
                         System.out.println("Sei nella chat con "+ nomeM);
                         do {
                             testoM = scanner.nextLine();
-                            if (!testoM.equals("/EXIT")) {
+                            if (!testoM.toUpperCase().equals("/EXIT")) {
                                 out.writeBytes(tipoM + ":" + nomeM + ":" + testoM + "\n");
                             }
-                        } while (!testoM.equals("/EXIT"));
+                        } while (!testoM.toUpperCase().equals("/EXIT"));
                         ricevitore.threadAttivo(false);
                         ricevitore.interrupt();
 
@@ -89,18 +93,28 @@ public class Main {
                         tipoM = "ALL";
                         ThreadRicevitore ricevitore2 = new ThreadRicevitore(socket, username, "ALL");
                         ricevitore2.start();
-                        System.out.println("Inserisci il messaggio da inviare");
-                        testoM = scanner.nextLine();
+                        System.out.println("Sei nella chat con tutti");
+                        do {
+                            testoM = scanner.nextLine();
+                            if (!testoM.toUpperCase().equals("EXIT")) {
+                                out.writeBytes(tipoM + ":" + testoM + "\n");
+                            }
+                        } while (!testoM.toUpperCase().equals("EXIT"));
+                        
                         out.writeBytes(tipoM + ":" + testoM + "\n");
                         ricevitore2.threadAttivo(false);
                         ricevitore2.interrupt();
 
+                        break;
+                    case "EXIT":
+                        out.writeBytes("EXT\n");
                         break;
 
                     default:
                         break;
                 }
             } while (!upperString.equals("EXIT"));
+            socket.close();
 
         } catch (Exception e) {
         }
