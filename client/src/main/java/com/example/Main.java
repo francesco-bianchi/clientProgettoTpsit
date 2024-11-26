@@ -48,7 +48,7 @@ public class Main {
                 System.out.println("PRIV - scrivi in una chat privata");
                 System.out.println("ALL - scrivi a tutti");
                 System.out.println("EXIT - esci");
-                System.out.println("---");
+                System.out.println("   ---   ");
                 System.out.println("");
 
                 stringaScelta = scanner.nextLine();

@@ -5,7 +5,6 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.Socket;
-import java.util.ArrayList;
 
 public class ThreadRicevitore extends Thread {
     Socket socket;
@@ -23,17 +22,6 @@ public class ThreadRicevitore extends Thread {
 
     public void threadAttivo(boolean threadAttivo) {
         this.threadAttivo = threadAttivo;
-    }
-
-
-
-    public boolean isEntrato() {
-        return entrato;
-    }
-
-
-    public void setEntrato(boolean entrato) {
-        this.entrato = entrato;
     }
 
 
@@ -63,12 +51,12 @@ public class ThreadRicevitore extends Thread {
                     if(msgSplit[0].equals("CR")){
                         
                         String[] cronologia = msgSplit[1].split(";");
-                        setEntrato(true);
+                        String[] mittenti = msgSplit[2].split(";");
                         System.out.println("Cronologia:");
-                        for (String s : cronologia) {
-                                System.out.println(s); // si visualizzano tutti i messaggi
+                        for (int i=0; i<cronologia.length; i++) {
+                            System.out.println(mittenti[i] + ": " + cronologia[i]); // si visualizzano tutti i messaggi
                         }
-                        System.out.println("---");
+                        System.out.println("  ---  ");
                     }
                     // mentre si è in chat
                     else if (msgSplit[0].equals("PRIV")) { // controlla se il thread è il reale destinatario del messaggio o se ha già fatto vedere la cronologia
