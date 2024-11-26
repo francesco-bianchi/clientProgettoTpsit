@@ -32,7 +32,6 @@ public class Main {
                 out.writeBytes(username + "\n");
 
                 serverUsername = in.readLine();
-                System.out.println(serverUsername);
 
                 if (serverUsername.equals("KOS")) {
                     System.out.println("utente già presente in chat");
@@ -46,21 +45,21 @@ public class Main {
                 System.out.println("");
                 System.out.println("--- Menù ---");
                 System.out.println("listaC - lista contatti");
-                System.out.println("PRIV - scrivi in una chat privata (/exit per uscire)");
+                System.out.println("PRIV - scrivi in una chat privata");
                 System.out.println("ALL - scrivi a tutti");
                 System.out.println("EXIT - esci");
                 System.out.println("---");
                 System.out.println("");
 
                 stringaScelta = scanner.nextLine();
-                upperString = stringaScelta.toUpperCase();
+                upperString = stringaScelta.toUpperCase(); // si mette tutto maiuscolo per avere un programma case sensitive
 
-                switch (upperString) {
+                switch (upperString) { // si controlla ciò che ha scritto l'utente
                     case "LISTAC":
                         out.writeBytes("C" + "\n");
                         System.out.println("ecco la lista dei contatti:");
                         listaStringa = in.readLine();
-                        lista = listaStringa.split(",");
+                        lista = listaStringa.split(","); //lista di tutti i contatti
 
                         for (int i = 0; i < lista.length; i++) {
                             System.out.println(lista[i]);
@@ -72,17 +71,17 @@ public class Main {
                         do {
                             System.out.println("a chi lo vuoi inviare?");
                             nomeM = scanner.nextLine();
-                        } while (nomeM.equals(username));
+                        } while (nomeM.equals(username)); // si controlla che non scriva a se stesso
                         
-                        out.writeBytes(tipoM + ":" + nomeM + ":CR\n");
+                        out.writeBytes(tipoM + ":" + nomeM + ":CR\n"); // per ricevere la cronologia
                         ThreadRicevitore ricevitore = new ThreadRicevitore(socket,username, nomeM);
                         ricevitore.start();
                         
-                        System.out.println("Sei nella chat con "+ nomeM + " (scrivere /exit per uscire)");
+                        System.out.println("Sei nella chat con "+ nomeM + " (scrivere '/exit' per uscire)");
                         do {
                             testoM = scanner.nextLine();
                             if (!testoM.toUpperCase().equals("/EXIT")) {
-                                out.writeBytes(tipoM + ":" + nomeM + ":" + testoM + "\n");
+                                out.writeBytes(tipoM + ":" + nomeM + ":" + testoM + "\n"); //si sta nella chat con il destinatario fino a che non si scrive /EXIT
                             }
                         } while (!testoM.toUpperCase().equals("/EXIT"));
                         ricevitore.threadAttivo(false);
@@ -93,23 +92,21 @@ public class Main {
                         tipoM = "ALL";
                         ThreadRicevitore ricevitore2 = new ThreadRicevitore(socket, username, "ALL");
                         ricevitore2.start();
-                        System.out.println("Sei nella chat con tutti (scrivere /exit per uscire)");
+                        System.out.println("Sei nella chat con tutti (scrivere '/exit' per uscire)");
                         do {
                             testoM = scanner.nextLine();
                             if (!testoM.toUpperCase().equals("/EXIT")) {
                                 out.writeBytes(tipoM + ":" + testoM + "\n");
-                            } // out di utente disconnesso
+                            }
                         } while (!testoM.toUpperCase().equals("/EXIT"));
                         
                         ricevitore2.threadAttivo(false);
                         ricevitore2.interrupt();
 
                         break;
-                    case "EXIT":
-                        out.writeBytes("EXT\n");
-                        break;
 
                     default:
+                        out.writeBytes("EXT\n");
                         break;
                 }
             } while (!upperString.equals("EXIT"));
