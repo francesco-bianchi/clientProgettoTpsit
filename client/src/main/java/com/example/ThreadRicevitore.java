@@ -64,7 +64,6 @@ public class ThreadRicevitore extends Thread {
                         
                         String[] cronologia = msgSplit[1].split(";");
                         setEntrato(true);
-                        System.out.println(isEntrato());
                         System.out.println("Cronologia:");
                         for (String s : cronologia) {
                                 System.out.println(s); // si visualizzano tutti i messaggi
@@ -72,7 +71,7 @@ public class ThreadRicevitore extends Thread {
                         System.out.println("---");
                     }
                     // mentre si è in chat
-                    else if (msgSplit[0].equals("PRIV") && !isEntrato()) { // controlla se il thread è il reale destinatario del messaggio o se ha già fatto vedere la cronologia
+                    else if (msgSplit[0].equals("PRIV")) { // controlla se il thread è il reale destinatario del messaggio o se ha già fatto vedere la cronologia
                         System.out.println(msgSplit[1] + " (in privato): " + msgSplit[2]); //fa vedere da chi arriva il messaggio e il contenuto
                     } 
                     else if(msgSplit[0].equals("ALL")){
