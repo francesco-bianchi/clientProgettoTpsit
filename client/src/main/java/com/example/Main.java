@@ -35,10 +35,10 @@ public class Main {
                 System.out.println(serverUsername);
 
                 if (serverUsername.equals("KOS")) {
-                    System.out.println("username non disponibile");
+                    System.out.println("utente già presente in chat");
 
                 } else {
-                    System.out.println("username disponibile");
+                    System.out.println("Benevenuto " + username);
                 }
             } while (serverUsername.equals("KOS"));
 
@@ -72,13 +72,13 @@ public class Main {
                         do {
                             System.out.println("a chi lo vuoi inviare?");
                             nomeM = scanner.nextLine();
-                        } while (!nomeM.equals(username));
+                        } while (nomeM.equals(username));
                         
                         out.writeBytes(tipoM + ":" + nomeM + ":CR\n");
                         ThreadRicevitore ricevitore = new ThreadRicevitore(socket,username, nomeM);
                         ricevitore.start();
                         
-                        System.out.println("Sei nella chat con "+ nomeM);
+                        System.out.println("Sei nella chat con "+ nomeM + " (scrivere /exit per uscire)");
                         do {
                             testoM = scanner.nextLine();
                             if (!testoM.toUpperCase().equals("/EXIT")) {
@@ -93,15 +93,15 @@ public class Main {
                         tipoM = "ALL";
                         ThreadRicevitore ricevitore2 = new ThreadRicevitore(socket, username, "ALL");
                         ricevitore2.start();
-                        System.out.println("Sei nella chat con tutti");
+                        System.out.println("Sei nella chat con tutti (scrivere /exit per uscire)");
                         do {
                             testoM = scanner.nextLine();
-                            if (!testoM.toUpperCase().equals("EXIT")) {
+                            System.out.println(testoM);
+                            if (!testoM.toUpperCase().equals("/EXIT")) {
                                 out.writeBytes(tipoM + ":" + testoM + "\n");
-                            }
-                        } while (!testoM.toUpperCase().equals("EXIT"));
+                            } // out di utente disconnesso
+                        } while (!testoM.toUpperCase().equals("/EXIT"));
                         
-                        out.writeBytes(tipoM + ":" + testoM + "\n");
                         ricevitore2.threadAttivo(false);
                         ricevitore2.interrupt();
 
