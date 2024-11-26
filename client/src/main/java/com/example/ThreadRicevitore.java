@@ -52,26 +52,30 @@ public class ThreadRicevitore extends Thread {
                 if (in.ready()) { // Verifica se ci sono dati disponibili per la lettura
                     messServer = in.readLine();
                     String[] msgSplit = messServer.split(":");
+                    entrato=false;
                     if (messServer.equals("KO")) {
                         System.out.println("Destinatario non trovato, scrivi /EXIT per uscrire");
                     }
                     else if (messServer.equals("NO")) {
                         System.out.println("   ---   ");
                     }
-                    
-                    else if(msgSplit[0].equals("l") && msgSplit[2] == "true"){ //avviene quando si rientra in chat
+                    // far vedere la cronologia una volta entrati in chat
+                    /*if(msgSplit[0].equals("CR")){ //avviene quando si rientra in chat
                         
                         String[] cronologia = msgSplit[1].split(";");
+                        setEntrato(true);
+                        System.out.println(isEntrato());
+                        System.out.println("Cronologia:");
                         for (String s : cronologia) {
-                            if(msgSplit[3].equals(dest)){
                                 System.out.println(s);
-                            }
                         }
+                        System.out.println("---");
                         
-                    }
-                    else if (msgSplit[0].equals(dest) || msgSplit[2] == "false") {
-                        System.out.println(msgSplit[0] + ": " + msgSplit[1]); //fa vedere da chi arriva il messaggio e il contenuto
-                    } // mentre si è in chat
+                    }*/
+                    // mentre si è in chat
+                    else if (msgSplit[0].equals("PRIV") && !isEntrato()) { // controlla se il thread è il reale destinatario del messaggio o se ha già fatto vedere la cronologia
+                        System.out.println(msgSplit[1] + " (in privato): " + msgSplit[2]); //fa vedere da chi arriva il messaggio e il contenuto
+                    } 
                     else if(msgSplit[0].equals("ALL")){
                         System.out.println(msgSplit[2] + "(a tutti): " + msgSplit[1]); //fa
                     }

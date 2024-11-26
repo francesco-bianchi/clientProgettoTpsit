@@ -96,7 +96,6 @@ public class Main {
                         System.out.println("Sei nella chat con tutti (scrivere /exit per uscire)");
                         do {
                             testoM = scanner.nextLine();
-                            System.out.println(testoM);
                             if (!testoM.toUpperCase().equals("/EXIT")) {
                                 out.writeBytes(tipoM + ":" + testoM + "\n");
                             } // out di utente disconnesso
