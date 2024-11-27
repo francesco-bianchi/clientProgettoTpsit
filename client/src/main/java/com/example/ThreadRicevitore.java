@@ -11,7 +11,6 @@ public class ThreadRicevitore extends Thread {
     String dest;
     String mitt;
     boolean threadAttivo;
-    boolean entrato;
 
     public ThreadRicevitore(Socket socket,String mitt, String dest) {
         this.socket = socket;
@@ -40,7 +39,7 @@ public class ThreadRicevitore extends Thread {
                 if (in.ready()) { // Verifica se ci sono dati disponibili per la lettura
                     messServer = in.readLine();
                     String[] msgSplit = messServer.split(":");
-                    entrato=false;
+                    
                     if (messServer.equals("KO")) {
                         System.out.println("Destinatario non trovato, scrivi /EXIT per uscrire");
                     }
