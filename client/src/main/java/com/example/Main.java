@@ -104,9 +104,10 @@ public class Main {
                         ricevitore2.interrupt();
 
                         break;
-
-                    default:
+                    case "EXIT":
                         out.writeBytes("EXT\n");
+                        break;
+                    default:
                         break;
                 }
             } while (!upperString.equals("EXIT"));
