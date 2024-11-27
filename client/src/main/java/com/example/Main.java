@@ -59,7 +59,7 @@ public class Main {
                         out.writeBytes("C" + "\n");
                         System.out.println("ecco la lista dei contatti:");
                         listaStringa = in.readLine();
-                        lista = listaStringa.split(","); //lista di tutti i contatti
+                        lista = listaStringa.split(";"); //lista di tutti i contatti
 
                         for (int i = 0; i < lista.length; i++) {
                             System.out.println(lista[i]);
